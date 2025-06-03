@@ -47,6 +47,16 @@
       width: 122px;
     }
   </style>
+
+
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "0aeedc1b47ac4336acdc42246ba3226b"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+
 </head>
 
 <body>
@@ -95,13 +105,170 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+
+      try{
+        // division by 0
+        if(secondNum === "0" && operator === "/"){
+          throw new DivisionByZero("Invalid or unexpected token, Cannot divide by 0");
+        }
+
+        // If input is not number type
+        if (isNaN(firstNum) || isNaN(secondNum) || firstNum.trim() === "" || secondNum.trim() === "") {
+          throw new NotNumber("Invalid or unexpected token, Input must be numbers");
+        }
+
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+        // output.innerHTML = "value" it will occur error if I comment out the         <output></output>      line
+      } catch (err){
+        output.innerHTML = "ERROR";
+        console.error(err)
+      } finally {
+        console.log("compelete calculation");
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+
+    // Getting the button List from errorBtns Array
+    const [logBtn, 
+           errBtn, 
+           countBtn, 
+           warnBtn, 
+           assertBtn, 
+           clrBtn, 
+           dirBtn, 
+           dirxmlBtn, 
+           groupStartBtn,
+           groupEndBtn,
+           tableBtn,
+           startTimerBtn,
+           endTimerBtn,
+           traceBtn,
+           globalErrorBtn
+          ] = errorBtns
+
+    // 1. console.log
+    logBtn.addEventListener('click', () => {
+      console.log("console.log feature");
+    });
+
+    // 2. console.error
+    errBtn.addEventListener('click', () => {
+      console.error("console.error feature");
+    });
+
+
+    // 3. console.count
+    countBtn.addEventListener('click', () => {
+      console.count("Count Button feature: ");
+    });
+
+    // 4. console.warn
+    warnBtn.addEventListener('click', () => {
+      console.warn("console.warn feature");
+    });
+
+    // 5. console.assert
+    assertBtn.addEventListener('click', () => {
+      const x = 1;
+      const y = 2;
+      console.assert(x === y, ` number ${x} is not equal with ${y}`);
+    });
+
+
+    // 6. console.clear
+    clrBtn.addEventListener('click', () => {
+      console.clear();
+    });
+
+    // 7. console.dir
+    dirBtn.addEventListener('click', () => {
+      const button = document.querySelector('#error-btns > button')
+      console.dir(button);
+    });
+
+    // 8. console.dirxml
+    dirxmlBtn.addEventListener('click', () => {
+      console.dirxml(dirxmlBtn);
+    });
+
+    // 9. console.group
+    groupStartBtn.addEventListener('click', () => {
+      console.group("console.group feature");
+    });
+
+    // 10. console.groupEnd
+    groupEndBtn.addEventListener('click', () => {
+      console.groupEnd();
+    });
+
+    // 11. console.table
+    tableBtn.addEventListener('click', () => {
+      const data = [
+        { name: "Kevin", age: 23 },
+        { name: "Travis", age: 34 },
+        { name: "Long", age: 67 }
+      ];
+      console.table(data);
+    });
+
+    // 12. console.time
+    startTimerBtn.addEventListener('click', () => {
+      console.time("timer");
+    });
+
+    // 13. console.timeEnd
+    endTimerBtn.addEventListener('click', () => {
+      console.timeEnd("timer");
+    });
+
+    // 14. console.trace
+    
+    function handleBtnClick2() { first(); }
+    function first() { second(); }
+    function second() { third(); }
+    function third() { console.trace("console.trace feature"); }
+
+    traceBtn.addEventListener('click', handleBtnClick2)
+
+    // 15. Global Error Trigger
+    function handleBtnClick() {
+      console.log("HAHA ERROR!!!");
+      HAHA(); // not defined so error occured.
+    }
+
+    globalErrorBtn.addEventListener('click', handleBtnClick);
+
+
+    // making custom error Step 3
+    class DivisionByZero extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "DivisionByZeroError"
+      }
+    }
+
+    class NotNumber extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "InputNotNumberError"
+      }
+    }
+
+    // For global error Step 4
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.log("Global ERROR");
+      console.log("Message:", message);
+      console.log("Source:", source);
+      console.log("Line:", lineno, "Col:", colno);
+      console.log("Error Object:", error);
+      return true; // prevent the browser default error
+  };
+
   </script>
 </body>
 
